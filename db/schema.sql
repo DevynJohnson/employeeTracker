@@ -1,6 +1,6 @@
 CREATE DATABASE employees_db;
 
-/c employees_db;
+\c employees_db;
 
 CREATE TABLE department (
     id SERIAL PRIMARY KEY,
@@ -22,4 +22,5 @@ CREATE TABLE employee (
     role_id INT NOT NULL,
     manager_id INT,
     FOREIGN KEY (role_id) REFERENCES role(id),
+    FOREIGN KEY (manager_id) REFERENCES employee(id)
 );

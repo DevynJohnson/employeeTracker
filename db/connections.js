@@ -2,20 +2,19 @@ import dotenv from 'dotenv';
 dotenv.config();
 import pg from 'pg';
 
-const { Pool } = pg;
-const pool = new Pool({
-	user: process.env.DB_USER,
-	password: process.env.DB_PASSWORD,
+const pool = new pg.Pool({
+	user: 'postgres',
+	password: 'password',
 	host: 'localhost',
-	database: process.env.DB_NAME,
+	database: 'employees_db',
 	port: 5432
 });
-const connectToDb = async () => {
+async function connectToDb () {
 	try {
 		await pool.connect();
 		console.log('Connected to the database.');
-	} catch (err) {
-		console.error('Error connecting to database:', err);
+	} catch (error) {
+		console.log(error.message);
 		process.exit(1);
 	}
 };
