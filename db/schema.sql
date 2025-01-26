@@ -1,3 +1,4 @@
+DROP DATABASE IF EXISTS employees_db;
 CREATE DATABASE employees_db;
 
 \c employees_db;
@@ -24,3 +25,5 @@ CREATE TABLE employee (
     FOREIGN KEY (role_id) REFERENCES role(id),
     FOREIGN KEY (manager_id) REFERENCES employee(id)
 );
+
+\i seeds.sql;
