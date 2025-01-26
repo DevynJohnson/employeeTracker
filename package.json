@@ -1,0 +1,16 @@
+{
+  "name": "employeetracker",
+  "version": "1.0.0",
+  "description": "## Description A command line application allowing a company to manage a database of employee information including department, role and personal information.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "inquirer": "^12.3.2",
+    "pg": "^8.13.1"
+  }
+}
