@@ -27,16 +27,32 @@ function startApp() {
         switch (answers.action) {
             case 'View all departments':
                 const departments = await viewDepartments();
-                console.table(departments);
+                const departmentData = departments.map(department => ({ id: department.id, name: department.name }));
+                console.table(departmentData);
                 break;
             case 'View all roles':
                 const roles = await viewRoles();
-                console.table(roles);
+                const roleData = roles.map(role => ({
+                    id: role.id,
+                    title: role.title,
+                    salary: role.salary,
+                    'Department Name': role.department_name
+                }));
+                console.table(roleData);
                 break;
-            case 'View all employees':
-                const employees = await viewEmployees();
-                console.table(employees);
-                break;
+                case 'View all employees':
+                    const employees = await viewEmployees();
+                    const employeeData = employees.map(employee => ({
+                        'Employee ID': employee.id,
+                        'First Name': employee.first_name,
+                        'Last Name': employee.last_name,
+                        'Role': employee.role_title,
+                        'Department': employee.department_name,
+                        'Salary': employee.salary,
+                        'Manager Name': employee.manager_first_name ? `${employee.manager_first_name} ${employee.manager_last_name}` : 'None'
+                    }));
+                    console.table(employeeData);
+                    break;
             case 'Add a department':
                 const departmentName = await inquirer.prompt({
                     type: 'input',

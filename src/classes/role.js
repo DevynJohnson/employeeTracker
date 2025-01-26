@@ -10,7 +10,8 @@ class Role { // Define the Role class with constructor information to match the 
   }
 
   async function viewRoles() {
-    const query = 'SELECT * FROM role';
+    const query = `SELECT role.id, role.title, role.salar, department.name AS department_name FROM role
+    JOIN department ON role.department_id = department.id`;
     const result = await pool.query(query);
     return result.rows;
 }

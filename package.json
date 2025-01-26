@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "cli-table3": "^0.6.5",
     "dotenv": "^16.4.7",
     "inquirer": "^12.3.2",
     "pg": "^8.13.1"

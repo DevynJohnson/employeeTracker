@@ -63,7 +63,12 @@ A command line application allowing a company to manage a database of employee i
 ## Credits
 <p>This project was created by Devyn Johnson. <a href="https://github.com/DevynJohnson">Github</a> | <a href="https://www.linkedin.com/in/devyn-johnson-a5259213b">LinkedIn</a> | <a href="https://devynjohnson.github.io/online-portfolio/">Portfolio</a>.</p>
 
-<p>This application uses the following npm packages: <a href="https://www.npmjs.com/package/inquirer">inquirer</a>, <a href="https://www.npmjs.com/package/pg">pg</a>.
+<p>This application uses the following npm packages: 
+<ul>
+<li><a href="https://www.npmjs.com/package/inquirer">inquirer</a></li>
+<li><a href="https://www.npmjs.com/package/pg">pg</a></li>
+<li><a href="https://www.npmjs.com/package/dotenv">dotenv</a></li>
+<li><a href="https://www.npmjs.com/package/cli-table3">cli-table3</a></li>
 
 ## License
 
