@@ -1,14 +1,82 @@
 import inquirer from 'inquirer';
-import pg from 'pg';
-import { Department, viewDepartments, addDepartment } from './classes/department.js';
-import { Role, viewRoles, addRole, updateEmployeeRole } from './classes/role.js';
-import { Employee, viewEmployees, addEmployee } from './classes/employee.js';
-import { pool, connectToDb } from '../db/connections.js';
+import Table from 'cli-table3';
+import figlet from 'figlet';
+import Department from './classes/department.js';
+import Role  from './classes/role.js';
+import Employee from './classes/employee.js';
+import { connectToDb, pool } from '../db/connections.js';
 
 // Connect to the PostgreSQL database
 connectToDb();
 
-function startApp() {
+// Function to display ASCII Art
+function displayAsciiArt() {
+    return new Promise((resolve, reject) => {
+        figlet('Employee Tracker', (err, data) => {
+            if (err) {
+                reject('Something went wrong with the ASCII art.');
+                return;
+            }
+            console.log(data);
+            resolve();
+        });
+    });
+}
+
+// Table rendering functions
+function renderDepartmentsTable(departments) {
+    const table = new Table({
+        head: ['Department ID', 'Department Name'],
+        colWidths: [15, 30]
+    });
+
+    departments.forEach(department => {
+        table.push([department.id, department.name]);
+    });
+
+    console.log(table.toString());
+}
+
+function renderRolesTable(roles) {
+    const table = new Table({
+        head: ['Role ID', 'Role Title', 'Salary', 'Department Name'],
+        colWidths: [15, 30, 15, 30]
+    });
+
+    roles.forEach(role => {
+        table.push([role.id, role.title, role.salary, role.department_name]);
+    });
+
+    console.log(table.toString());
+}
+
+function renderEmployeesTable(employees) {
+    const table = new Table({
+        head: ['Employee ID', 'First Name', 'Last Name', 'Role', 'Department', 'Salary', 'Manager Name'],
+        colWidths: [15, 20, 20, 25, 20, 15, 30]
+    });
+
+    employees.forEach(employee => {
+        table.push([
+            employee.id,
+            employee.first_name,
+            employee.last_name,
+            employee.role_title,
+            employee.department_name,
+            employee.salary,
+            employee.manager_first_name ? `${employee.manager_first_name} ${employee.manager_last_name}` : 'None'
+        ]);
+    });
+
+    console.log(table.toString());
+}
+
+// Main app function with Inquirer prompts
+async function startApp() {
+    // Display ASCII art before the menu
+    await displayAsciiArt();
+
+    // Show the menu after the ASCII art is displayed
     inquirer.prompt({
         type: 'list',
         name: 'action',
@@ -21,49 +89,40 @@ function startApp() {
             'Add a role',
             'Add an employee',
             'Update an employee role',
+            'Delete a department',
+            'Delete a role',
+            'Delete an employee',
             'Exit'
         ]
     }).then(async (answers) => {
         switch (answers.action) {
             case 'View all departments':
-                const departments = await viewDepartments();
-                const departmentData = departments.map(department => ({ id: department.id, name: department.name }));
-                console.table(departmentData);
+                const departments = await Department.viewDepartments();
+                renderDepartmentsTable(departments);
                 break;
+
             case 'View all roles':
-                const roles = await viewRoles();
-                const roleData = roles.map(role => ({
-                    id: role.id,
-                    title: role.title,
-                    salary: role.salary,
-                    'Department Name': role.department_name
-                }));
-                console.table(roleData);
+                const roles = await Role.viewRoles();
+                renderRolesTable(roles);
                 break;
-                case 'View all employees':
-                    const employees = await viewEmployees();
-                    const employeeData = employees.map(employee => ({
-                        'Employee ID': employee.id,
-                        'First Name': employee.first_name,
-                        'Last Name': employee.last_name,
-                        'Role': employee.role_title,
-                        'Department': employee.department_name,
-                        'Salary': employee.salary,
-                        'Manager Name': employee.manager_first_name ? `${employee.manager_first_name} ${employee.manager_last_name}` : 'None'
-                    }));
-                    console.table(employeeData);
-                    break;
+
+            case 'View all employees':
+                const employees = await Employee.viewEmployees();
+                renderEmployeesTable(employees);
+                break;
+
             case 'Add a department':
                 const departmentName = await inquirer.prompt({
                     type: 'input',
                     name: 'name',
                     message: 'Enter the name of the department:'
                 });
-                await addDepartment(departmentName.name);
+                await Department.addDepartment(departmentName.name);
                 console.log('Department added successfully.');
                 break;
+
             case 'Add a role':
-                const departmentsList = await viewDepartments();
+                const departmentsListForRole = await Department.viewDepartments();
                 const roleDetails = await inquirer.prompt([
                     {
                         type: 'input',
@@ -79,15 +138,16 @@ function startApp() {
                         type: 'list',
                         name: 'departmentId',
                         message: 'Select the department for the role:',
-                        choices: departmentsList.map(department => ({ name: department.name, value: department.id }))
+                        choices: departmentsListForRole.map(department => ({ name: department.name, value: department.id }))
                     }
                 ]);
-                await addRole(roleDetails.title, roleDetails.salary, roleDetails.departmentId);
+                await Role.addRole(roleDetails.title, roleDetails.salary, roleDetails.departmentId);
                 console.log('Role added successfully.');
                 break;
+
             case 'Add an employee':
-                const rolesList = await viewRoles();
-                const employeesList = await viewEmployees();
+                const rolesListForEmployee = await Role.viewRoles();
+                const allEmployeesList = await Employee.viewEmployees();
                 const employeeDetails = await inquirer.prompt([
                     {
                         type: 'input',
@@ -103,21 +163,22 @@ function startApp() {
                         type: 'list',
                         name: 'roleId',
                         message: 'Select the role for the employee:',
-                        choices: rolesList.map(role => ({ name: role.title, value: role.id }))
+                        choices: rolesListForEmployee.map(role => ({ name: role.title, value: role.id }))
                     },
                     {
                         type: 'list',
                         name: 'managerId',
                         message: 'Select the manager for the employee (leave blank if none):',
-                        choices: [{ name: 'None', value: null }, ...employeesList.map(employee => ({ name: `${employee.first_name} ${employee.last_name}`, value: employee.id }))]
+                        choices: [{ name: 'None', value: null }, ...allEmployeesList.map(employee => ({ name: `${employee.first_name} ${employee.last_name}`, value: employee.id }))]
                     }
                 ]);
-                await addEmployee(employeeDetails.firstName, employeeDetails.lastName, employeeDetails.roleId, employeeDetails.managerId);
+                await Employee.addEmployee(employeeDetails.firstName, employeeDetails.lastName, employeeDetails.roleId, employeeDetails.managerId);
                 console.log('Employee added successfully.');
                 break;
+
             case 'Update an employee role':
-                const employeesForUpdate = await viewEmployees();
-                const rolesForUpdate = await viewRoles();
+                const employeesForUpdate = await Employee.viewEmployees();
+                const rolesForUpdate = await Role.viewRoles();
                 const updateDetails = await inquirer.prompt([
                     {
                         type: 'list',
@@ -132,14 +193,53 @@ function startApp() {
                         choices: rolesForUpdate.map(role => ({ name: role.title, value: role.id }))
                     }
                 ]);
-                await updateEmployeeRole(updateDetails.employeeId, updateDetails.newRoleId);
+                await Role.updateEmployeeRole(updateDetails.employeeId, updateDetails.newRoleId);
                 console.log('Employee role updated successfully.');
                 break;
+
+            case 'Delete a department':
+                const departmentsList = await Department.viewDepartments();
+                const departmentToDelete = await inquirer.prompt({
+                    type: 'list',
+                    name: 'departmentId',
+                    message: 'Select a department to delete:',
+                    choices: departmentsList.map(department => ({ name: department.name, value: department.id }))
+                });
+                await Department.deleteDepartment(departmentToDelete.departmentId);
+                console.log('Department deleted successfully.');
+                break;
+
+            case 'Delete a role':
+                const rolesList = await Role.viewRoles();
+                const roleToDelete = await inquirer.prompt({
+                    type: 'list',
+                    name: 'roleId',
+                    message: 'Select a role to delete:',
+                    choices: rolesList.map(role => ({ name: role.title, value: role.id }))
+                });
+                await Role.deleteRole(roleToDelete.roleId);
+                console.log('Role deleted successfully.');
+                break;
+
+            case 'Delete an employee':
+                const allEmployees = await Employee.viewEmployees();
+                const employeeToDelete = await inquirer.prompt({
+                    type: 'list',
+                    name: 'employeeId',
+                    message: 'Select an employee to delete:',
+                    choices: allEmployees.map(employee => ({ name: `${employee.first_name} ${employee.last_name}`, value: employee.id }))
+                });
+                await Employee.deleteEmployee(employeeToDelete.employeeId);
+                console.log('Employee deleted successfully.');
+                break;
+
             case 'Exit':
                 pool.end();
                 console.log('Goodbye!');
                 process.exit();
         }
+
+        // Restart the app after completing the action
         startApp();
     });
 }

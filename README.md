@@ -68,6 +68,7 @@ A command line application allowing a company to manage a database of employee i
 <li><a href="https://www.npmjs.com/package/inquirer">inquirer</a></li>
 <li><a href="https://www.npmjs.com/package/pg">pg</a></li>
 <li><a href="https://www.npmjs.com/package/dotenv">dotenv</a></li>
+<li><a href="https://www.npmjs.com/package/figlet">figlet</a></li>
 <li><a href="https://www.npmjs.com/package/cli-table3">cli-table3</a></li>
 
 ## License
