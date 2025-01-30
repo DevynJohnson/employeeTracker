@@ -45,7 +45,7 @@ A command line application allowing a company to manage a database of employee i
 ## Usage
 
 <h3>Step 4: Run the Application</h3>
-<p>Run the application by navigating to the root directory of the repository and entering the following command in the terminal and follow any prompts to manage database information:</p>
+<p>Run the application by navigating to the src folder in the directory of the repository and entering the following command in the terminal and follow any prompts to manage database information:</p>
 <code>node index.js</code>
 
 ## Troubleshooting/Questions
