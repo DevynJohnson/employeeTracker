@@ -48,6 +48,8 @@ A command line application allowing a company to manage a database of employee i
 <p>Run the application by navigating to the src folder in the directory of the repository and entering the following command in the terminal and follow any prompts to manage database information:</p>
 <code>node index.js</code>
 
+<p>You can find a walkthrough video of how to do that <a href="https://drive.google.com/file/d/13Mpkft6TO6BVsvI0xQczIXH9DVspvqQA/view">here</a>.</p>
+
 <p>If the application is working correctly you should see this, and then interact with the application using the arrow keys to navigate the menu and the Enter key to select an option:</p>
 
 ![Application Screenshot](./assets/emp_tracker_screenshot.png)
