@@ -69,7 +69,7 @@ A command line application allowing a company to manage a database of employee i
 <li>Reach out to <a href="mailto:dljohnson1313@gmail.com?subject=Employee Tracker Issue">dljohnson1313@gmail.com</a> with an explanation of the issue if you are unable to find a solution using the steps above.</li>
 
 ## Credits
-<p>This project was created by Devyn Johnson. <a href="https://github.com/DevynJohnson">Github</a> | <a href="https://www.linkedin.com/in/devyn-johnson-a5259213b">LinkedIn</a> | <a href="https://devynjohnsonportfolio.netlify.app/">Portfolio</a>.</p>
+<p>This project was created by Devyn Johnson. <a href="https://github.com/DevynJohnson">Github</a> | <a href="https://www.linkedin.com/in/devyn-johnson-a5259213b">LinkedIn</a> | <a href="https://devynjohnson.me">Portfolio</a>.</p>
 
 <p>This application uses the following npm packages: 
 <ul>
